@@ -1,0 +1,29 @@
+# Binaries
+bin/
+dist/
+main
+*.exe
+*.test
+*.out
+
+# Dependency directories
+vendor/
+node_modules/
+
+# Dotenv
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
