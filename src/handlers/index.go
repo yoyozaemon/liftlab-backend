@@ -20,3 +20,7 @@ func (a *AuthHandler) Login(c *fiber.Ctx) error {
 func (u *UserHandler) GetUser(c *fiber.Ctx) error {
 	return users.GetUser(c)
 }
+
+func (u *UserHandler) UpdateUser(c *fiber.Ctx) error {
+	return users.UpdateUser(c)
+}

@@ -28,4 +28,5 @@ func SetupAuthRoutes(router fiber.Router) {
 func SetupUserRoutes(router fiber.Router) {
 	user := router.Group("/user")
 	user.Get("/get-user/:email", middlewares.VerifyToken, handlers.User.GetUser)
+	user.Put("/update-user", middlewares.VerifyToken, handlers.User.UpdateUser)
 }

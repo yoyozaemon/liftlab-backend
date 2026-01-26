@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"context"
+	"liftlab/src/config"
 	"liftlab/src/helpers"
 	"liftlab/src/models"
 	"liftlab/src/utils"
@@ -14,12 +14,14 @@ import (
 )
 
 type LoginRequest struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	PhotoUrl string `json:"photo_url"`
 }
 
 func Login(c *fiber.Ctx) error {
 	var req LoginRequest
+
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
@@ -32,10 +34,10 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Name is required"})
 	}
 
-	collection := helpers.Client.Database("liftlab").Collection("users")
+	collection := helpers.Client.Database(config.DB_NAME).Collection("users")
 	var user models.User
 
-	err := collection.FindOne(context.Background(), bson.M{"email": req.Email}).Decode(&user)
+	err := collection.FindOne(c.Context(), bson.M{"email": req.Email}).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			uid, err := utils.GenerateUID()
@@ -44,21 +46,24 @@ func Login(c *fiber.Ctx) error {
 			}
 
 			newUser := models.User{
-				UID:   uid,
-				Name:  req.Name,
-				Email: req.Email,
+				UID:      uid,
+				Name:     req.Name,
+				Email:    req.Email,
+				PhotoUrl: req.PhotoUrl,
 				BaseModel: models.BaseModel{
 					ID:        primitive.NewObjectID(),
 					CreatedAt: time.Now(),
 				},
 			}
 
-			_, err = collection.InsertOne(context.Background(), newUser)
+			_, err = collection.InsertOne(c.Context(), newUser)
 			if err != nil {
+				helpers.Logger.Printf("Failed to insert user: %v", err)
 				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create user"})
 			}
 			user = newUser
 		} else {
+			helpers.Logger.Printf("Database error during login: %v", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Database error"})
 		}
 	}

@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"liftlab/src/helpers"
 	"liftlab/src/utils"
 	"strings"
 
@@ -25,6 +26,7 @@ func VerifyToken(c *fiber.Ctx) error {
 	tokenString := parts[1]
 	claims, err := utils.ValidateToken(tokenString)
 	if err != nil {
+		helpers.Logger.Printf("Token validation failed: %v", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Invalid or Expired Token",
 		})

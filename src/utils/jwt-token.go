@@ -2,8 +2,8 @@ package utils
 
 import (
 	"errors"
+	"liftlab/src/config"
 	"liftlab/src/models"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,9 +18,9 @@ func GenerateToken(user *models.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "default_secret"
+	secret := config.JWT_SECRET
+	if len(secret) < 32 {
+		return "", errors.New("JWT_SECRET must be at least 32 characters long")
 	}
 
 	t, err := token.SignedString([]byte(secret))
@@ -32,10 +32,7 @@ func GenerateToken(user *models.User) (string, error) {
 }
 
 func ValidateToken(tokenString string) (jwt.MapClaims, error) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "default_secret"
-	}
+	secret := config.JWT_SECRET
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

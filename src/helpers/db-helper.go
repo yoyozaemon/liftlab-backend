@@ -10,6 +10,7 @@ import (
 )
 
 var Client *mongo.Client
+var Logger = log.Default()
 
 func ConnectToDB() {
 	config.LoadConfig()
