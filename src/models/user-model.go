@@ -11,5 +11,4 @@ type User struct {
 	Email     string `json:"email" bson:"email"`
 	PhotoUrl  string `json:"photo_url" bson:"photo_url"`
 	Body      body   `json:"body" bson:"body"`
-	// RoleID    string `json:"role_id" bson:"role_id,omitempty"`
 }
