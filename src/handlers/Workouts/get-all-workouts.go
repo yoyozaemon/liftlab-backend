@@ -22,5 +22,5 @@ func GetAllWorkouts(c *fiber.Ctx) error {
 
 	cursor.All(c.Context(), &workout)
 
-	return c.JSON(fiber.Map{"success": true, "message": "Workout fetched successfully", "data": workout})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true, "message": "Workout fetched successfully", "data": workout})
 }
